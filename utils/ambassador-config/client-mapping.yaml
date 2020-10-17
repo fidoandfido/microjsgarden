@@ -1,0 +1,10 @@
+---
+apiVersion: ambassador/v1
+kind:  Mapping
+name:  client_mapping
+prefix: /
+precedence: -2
+bypass_auth: true
+service: dockerhost:3000
+
+

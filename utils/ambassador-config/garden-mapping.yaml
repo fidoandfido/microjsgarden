@@ -1,0 +1,7 @@
+---
+apiVersion: ambassador/v1
+kind:  Mapping
+name:  courses_mapping
+prefix: /api/v1/gardens/
+rewrite: /gardens/
+service: dockerhost:3112

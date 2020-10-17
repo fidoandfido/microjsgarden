@@ -1,0 +1,15 @@
+---
+apiVersion: ambassador/v1
+kind:  Mapping
+name:  iam_mapping_auth
+prefix: /api/v1/auth/
+rewrite: /auth/
+service: dockerhost:3111
+---
+apiVersion: ambassador/v1
+kind:  Mapping
+name:  iam_mapping_groups
+prefix: /api/v1/users/
+rewrite: /users/
+service: dockerhost:3111
+
