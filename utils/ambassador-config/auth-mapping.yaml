@@ -1,15 +1,9 @@
 ---
 apiVersion: ambassador/v1
-kind:  Mapping
-name:  iam_mapping_auth
-prefix: /api/v1/auth/
-rewrite: /auth/
-service: dockerhost:3111
----
-apiVersion: ambassador/v1
-kind:  Mapping
-name:  iam_mapping_groups
-prefix: /api/v1/users/
-rewrite: /users/
-service: dockerhost:3111
-
+kind:  AuthService
+name:  authentication
+auth_service: "dockerhost:3110"
+allow_request_body: false
+allowed_request_headers:
+  - "x-internal"
+  - "x-request"

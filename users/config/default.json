@@ -1,0 +1,1 @@
+{ "loggingLevel": "info", "useRabbit": true, "useSQL": true, "useJWT": true, "dev": false }

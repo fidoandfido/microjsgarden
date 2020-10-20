@@ -5,6 +5,6 @@ name:  client_mapping
 prefix: /
 precedence: -2
 bypass_auth: true
-service: dockerhost:3000
+service: dockerhost:3001
 
 

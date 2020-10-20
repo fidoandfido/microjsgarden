@@ -15,6 +15,33 @@ else
     docker run --rm -d --name garden-postgres -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p 9990:5432 postgres
 fi
 
+mkdir -p ~/.gardens
+CONFIG=~/.gardens
+
+
+PATH=${CONFIG}/bin:$PATH
+
+if [[ ! -f ${CONFIG}/jwtInternalRS256.key ]];
+then
+  cd $CONFIG
+  ssh-keygen -m PEM -t rsa -b 4096 -f ./jwtInternalRS256.key  -N ''
+  openssl rsa -in ./jwtInternalRS256.key -pubout -outform PEM -out ./jwtInternalRS256.key.pub
+  echo "Internal keys created"
+fi
+export JWT_INTERNAL_PUBLIC_KEY=$(cat ${CONFIG}/jwtInternalRS256.key.pub)
+export JWT_INTERNAL_PRIVATE_KEY=$(cat ${CONFIG}/jwtInternalRS256.key)
+
+if [[ ! -f ${CONFIG}/jwtExternalRS256.key ]];
+then
+  cd $CONFIG
+  ssh-keygen -m PEM -t rsa -b 4096 -f ./jwtExternalRS256.key  -N ''
+  openssl rsa -in ./jwtExternalRS256.key -pubout -outform PEM -out ./jwtExternalRS256.key.pub
+  echo "External keys created"
+fi
+export JWT_EXTERNAL_PUBLIC_KEY=$(cat ${CONFIG}/jwtExternalRS256.key.pub)
+export JWT_EXTERNAL_PRIVATE_KEY=$(cat ${CONFIG}/jwtExternalRS256.key)
+
+
 
 export DB_CONNECTION="postgres://postgres:$POSTGRES_PASSWORD@localhost:9990/postgres?sslmode=disable"
 
