@@ -4,6 +4,11 @@ const path = require("path");
 
 let rootdir = process.env["ROOT_DIR"] 
 let env = {
+  JWT_INTERNAL_PUBLIC_KEY: process.env["JWT_INTERNAL_PUBLIC_KEY"],
+  JWT_INTERNAL_PRIVATE_KEY: process.env["JWT_INTERNAL_PRIVATE_KEY"],
+  JWT_EXTERNAL_PUBLIC_KEY: process.env["JWT_EXTERNAL_PUBLIC_KEY"],
+  JWT_EXTERNAL_PRIVATE_KEY: process.env["JWT_EXTERNAL_PRIVATE_KEY"],
+  DB_CONNECTION: process.env["DB_CONNECTION"],
 };
 
 module.exports = {
@@ -15,15 +20,28 @@ module.exports = {
       watch: true,
       env: {
         env,
-        PORT: 3000,
+        PORT: 3001,
         BROWSER: "none"
       }
     },
     {
-      name: "AUTH",
+      name: "auth",
       script: "npm",
       args: "start",
       cwd: path.join(rootdir, "auth"),
+      watch: true,
+      instance_var: "INSTANCE_ID",
+      env: {
+        ...env,
+        PORT: 3110,
+        NODE_ENV: "development"
+      }
+    },
+    {
+      name: "users",
+      script: "npm",
+      args: "start",
+      cwd: path.join(rootdir, "users"),
       watch: true,
       instance_var: "INSTANCE_ID",
       env: {
@@ -33,7 +51,7 @@ module.exports = {
       }
     },
     {
-      name: "GARDENS",
+      name: "gardens",
       script: "npm",
       args: "start",
       cwd: path.join(rootdir, "gardens"),
