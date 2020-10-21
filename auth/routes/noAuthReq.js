@@ -3,7 +3,7 @@ const express = require('express');
 
 const router = express.Router();
 
-// These are the routes that can be accesses without prior authorisation
+// These are the explicit api routes that can be accesses without prior authorisation
 // 
 // auth routes are allowed - you don't need authorisation to log in!
 const validRoutes = [

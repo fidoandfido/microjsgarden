@@ -46,10 +46,8 @@ module.exports.createModels = function createModels(dirname) {
 
   const logging =
     !process.env.SQL_LOGGING || process.env.SQL_LOGGING !== 'false';
-
   // Make a connection pool
   const sequelize = getSequelize();
-  console.log("SEQUELIZE: " + sequelize)
   // Import all the models
   fs.readdirSync(dirname)
     .filter(file => file.charAt(0).toUpperCase() === file.charAt(0))
@@ -78,14 +76,10 @@ module.exports.createModels = function createModels(dirname) {
       }
     })
     .catch(err => {
-      if (!config.useSQL) {
-        logger.warning({ database: 'Not connecting to database' });
-      } else {
-        // If we can't connect at first - fail hard
-        logger.error({ database: 'Failed to Connect to Database' });
-        logger.error(err);
-        process.exit(1);
-      }
+      // If we can't connect at first - fail hard
+      logger.error({ database: 'Failed to Connect to Database' });
+      logger.error(err);
+      process.exit(1);
     });
 
   return db;

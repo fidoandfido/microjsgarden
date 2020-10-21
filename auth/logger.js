@@ -1,8 +1,4 @@
-/**
- * @file The logger for a Penteract service
- * @author Robert 'Probie' Offner
- * @copyright Fifth Domain 2018
- */
+
 const config = require('config');
 const winston = require('winston');
 
@@ -11,7 +7,7 @@ const winston = require('winston');
  */
 const logger = winston.createLogger({
   levels: winston.config.syslog.levels,
-  transports: [new winston.transports.Console({ level: config.loggingLevel })],
+  transports: [new winston.transports.Console({ level: 'debug' })],
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.json(),
