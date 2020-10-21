@@ -13,17 +13,14 @@ const {
 const logger = require('../logger');
 
 // Key to check auth with
-const publickey = process.env.JWT_EXTERNAL_PUBLIC_KEY || (!useJWT && 'dummy value for test');
+const publickey = process.env.JWT_EXTERNAL_PUBLIC_KEY;
 
 // Key to sign with (note: This is a different key!)
 const privatekey = process.env.JWT_INTERNAL_PRIVATE_KEY;
 const internalkey = process.env.JWT_INTERNAL_PUBLIC_KEY;
 
-// Internal requests get waived through, since they already have the correct token.
+// Internal requests are authorised here.
 router.all('*', (req, res, next) => {
-
-  console.log('---------all-----------')
-
   if (req.header('X-Gardens') && req.header('Authorization')) {
     try {
       const token = req.header('Authorization').split(' ')[1];
@@ -41,20 +38,18 @@ router.all('*', (req, res, next) => {
   return next();
 });
 
+// Check the json web token
+// If it checks out, then we can replace token with an 'internal' token for this request.
+// This internal token will have a shorter expiry, reducing the possibility of replay attacks
+// on specific services.
 router.all('*', ejwt({
   secret: publickey,
   algorithms: ['RS256']
 }), (req, res, next) => {
-
-  console.log('---------all-----------2222222')
-
-
   const {
     sub,
   } = req.user;
-
   console.log(sub)
-
   // Translate UUID -> SQL Primary Key and Org ID
   User.findOne({
     attributes: ['unique_id'],
@@ -62,14 +57,10 @@ router.all('*', ejwt({
       unique_id: sub,
     }],
   }).then((user) => {
-
-      console.log('-------------------------')
-      console.log(user)
       const uid = sub;
       const {
         id,
       } = user;
-      // Create the scope
       const scope = 'user';
       const newToken = jwt.sign({
         sub: id,
@@ -84,9 +75,8 @@ router.all('*', ejwt({
       res.send('Authed');
     })
     .catch((err) => {
-      // The user doesn't exist, so deny. We keep the same error
-      // object and just append the status for express. We may wish to
-      // change this behaviour in the future.
+      // There was as issue retrieiving the user (most likely doesnt exist!) so
+      // return a 401. 
       logger.error(err);
       const newError = err;
       newError.status = 401;
