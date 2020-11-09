@@ -12,7 +12,6 @@ const enumerateErrorFormat = winston.format(inputInfo => {
       info.message,
     );
   }
-
   if (info instanceof Error) {
     return Object.assign(
       {
@@ -22,12 +21,12 @@ const enumerateErrorFormat = winston.format(inputInfo => {
       info,
     );
   }
-
   return info;
 });
 
 /**
  * The logger object. Only log to the console.
+ * This will be handled either by PM2 in dev or docker (kubernetes) in deployment
  */
 const logger = winston.createLogger({
   levels: winston.config.syslog.levels,
@@ -38,5 +37,4 @@ const logger = winston.createLogger({
     winston.format.json(),
   ),
 });
-
 module.exports = logger;

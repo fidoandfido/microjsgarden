@@ -5,10 +5,7 @@ const passport = require('passport');
 const {
   BasicStrategy,
 } = require('passport-http');
-const {
-  User,
-} = require('../../models');
-
+const User = require('../../models/User');
 module.exports = function localPassport() {
   // Use local strategy
   passport.use(
@@ -17,8 +14,7 @@ module.exports = function localPassport() {
         where: {
           email: usernameOrEmail.toLowerCase(),
         },
-      })
-        .then((user) => {
+      }).then((user) => {
           if (!user || !user.authenticate(password)) {
             return done(null, false, {
               message: `Invalid username or password (${new Date().toLocaleTimeString()})`,

@@ -1,6 +1,8 @@
 
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   created_at timestamp NULL DEFAULT NULL,

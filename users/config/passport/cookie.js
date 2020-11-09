@@ -1,7 +1,7 @@
 const passport = require('passport');
 const CookieStrategy = require('passport-cookie');
 const jwt = require('jsonwebtoken');
-const { User } = require('../../models');
+const User = require('../../models/User');
 
 const publicKey = process.env.JWT_EXTERNAL_PUBLIC_KEY;
 

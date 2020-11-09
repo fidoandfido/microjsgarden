@@ -1,24 +1,34 @@
-# Run postgres
+# Create a postgres instance in a docker container
 
 POSTGRES_PASSWORD="postgresPassword1!"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-
 if  docker ps -a | grep garden-postgres
 then
     if [ "$db_rebuild" = "y" ]; then
     	echo "Rebuilding Postgresql"
     	docker rm -f garden-postgres
     	docker run --rm -d --name garden-postgres -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p 9990:5432 postgres
+        echo "Sleeping for 10 seconds to allow postgres to complete start up..."
+        sleep 10
     fi
 else
     echo "Starting Postgresql"
     docker run --rm -d --name garden-postgres -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p 9990:5432 postgres
+    echo "Sleeping for 10 seconds to allow postgres to complete start up..."
+    sleep 10
 fi
+export DB_CONNECTION="postgres://postgres:$POSTGRES_PASSWORD@localhost:9990/postgres?sslmode=disable"
+echo $DB_CONNECTION
 
+# insert the db migration...
+cd ../migrations
+docker build -t garden-migrations .
+docker run -it --rm -e DB_CONNECTION=$DB_CONNECTION --network host garden-migrations
+
+
+# insert the db migration...
 mkdir -p ~/.gardens
 CONFIG=~/.gardens
-
-
 PATH=${CONFIG}/bin:$PATH
 
 if [[ ! -f ${CONFIG}/jwtInternalRS256.key ]];
@@ -41,17 +51,10 @@ fi
 export JWT_EXTERNAL_PUBLIC_KEY=$(cat ${CONFIG}/jwtExternalRS256.key.pub)
 export JWT_EXTERNAL_PRIVATE_KEY=$(cat ${CONFIG}/jwtExternalRS256.key)
 
-
-
-export DB_CONNECTION="postgres://postgres:$POSTGRES_PASSWORD@localhost:9990/postgres?sslmode=disable"
-
-echo $DB_CONNECTION
-
 # insert the db migration...
 cd ../migrations
 docker build -t garden-migrations .
 docker run -it --rm -e DB_CONNECTION=$DB_CONNECTION --network host garden-migrations
-
 
 # Run ambassador
 docker rm -f garden-ambassador

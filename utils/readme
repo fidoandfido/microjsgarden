@@ -1,0 +1,12 @@
+
+Curl can be used to 'sign up' or authenticate, as such:
+
+Create account through curl:
+curl -v --header "Content-Type: application/json" --request POST --data '{"name":"xyz","password":"xyz","email":"a@foo.com"}' http://localhost:8080/api/v1/auth/signup
+
+
+Login through curl:
+curl -v --header "Content-Type: application/json" --request POST -u a@foo.com:xyz http://localhost:8080/api/v1/auth/login
+
+Returns JSON web token
+

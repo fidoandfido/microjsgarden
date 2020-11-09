@@ -1,12 +1,9 @@
 const Promise = require('bluebird');
 const passport = require('passport');
 const logger = require('../logger');
-const AuthError = require('../AuthError');
-const APIError = require('../APIError');
-
-const {
-    User,
-} = require('../models');
+const AuthError = require('../errors/AuthError');
+const APIError = require('../errors/APIError');
+const User = require('../models/User');
 
 function refreshCookieConfig(hostname) {
   return {
@@ -35,9 +32,7 @@ exports.login = function login(req, res, next) {
 };
 
 exports.logout = function logout(req, res) {
-    return res
-        .clearCookie('refresh_token', refreshCookieConfig(req.hostname))
-        .json({ success: true });
+    return res.clearCookie('refresh_token', refreshCookieConfig(req.hostname)).json({ success: true });
 };
 
 exports.refreshToken = function refreshToken(req, res, next) {
@@ -63,13 +58,11 @@ exports.createAccount = function createAccount(req, res, next) {
         const error = new APIError('Password is required');
         return next(error);
     }
-
     // Immediatly return failure if the password is not there.
     if (!req.body.name) {
         const error = new APIError('Name is required');
         return next(error);
     }
-
     if (!req.body.email) {
         const error = new APIError('Email is required');
         return next(error);
@@ -84,10 +77,9 @@ exports.createAccount = function createAccount(req, res, next) {
         name: req.body.name,
         password: req.body.password,
     };
-
     // Init user and add missing fields.
+    console.log(User);
     const user = new User(userFromRequest);
-    console.log(userFromRequest)
     return user.save()
         .then((savedUser) => {
             console.log({
@@ -100,6 +92,7 @@ exports.createAccount = function createAccount(req, res, next) {
             });
         })
         .catch((err) => {
+            logger.error(err)
             next(err);
         })
 };
