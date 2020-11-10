@@ -10,3 +10,13 @@ curl -v --header "Content-Type: application/json" --request POST -u a@foo.com:xy
 
 Returns JSON web token
 
+In each project - install dev airbnb linter (and eslint):
+$npm install eslint --save-dev
+$./node_modules/.bin/eslint --init
+
+There is a bit of hassle to get vscode to work with it nicely... especially if using prettier as well.
+
+eslint from the cmd line:
+$sudo npm i -g eslint
+
+

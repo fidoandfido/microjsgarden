@@ -1,0 +1,5 @@
+{
+  "loggingLevel": "debug",
+  "useSQL": false,
+  "useJWT": false
+}
